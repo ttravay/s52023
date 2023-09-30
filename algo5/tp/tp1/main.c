@@ -107,14 +107,14 @@ void fusion(int *liste, int indPremier, int indDernier)
 
     for (int i = 0; i < tailleT1; i++)
     {
-        t1[i] = liste[i];
+        t1[i] = liste[indPremier + i]; // rajout indPremier
     }
     for (int i = 0; i < tailleT2; i++)
     {
         t2[i] = liste[i + indMilieu + 1];
     }
 
-    int ind1 = 0, ind2 = 0, k = 0;
+    int ind1 = 0, ind2 = 0, k = indPremier;
     while (ind1 < tailleT1 && ind2 < tailleT2)
     {
         if (t1[ind1] < t2[ind2])
@@ -147,12 +147,39 @@ void triFusion(int *liste, int indPremier, int indDernier)
 {
     if (indPremier < indDernier)
     {
-        int indMilieu = indPremier + indDernier / 2;
+        int indMilieu = (indPremier + indDernier) / 2;
         triFusion(liste, indPremier, indMilieu);
         triFusion(liste, indMilieu + 1, indDernier);
-        printListe(liste, indDernier - indPremier);
 
         fusion(liste, indPremier, indDernier);
+    }
+}
+
+int partition(int *liste, int indPremier, int indDernier)
+{
+    int pivot = liste[indDernier];
+    int k = indPremier;
+
+    for (int i = indPremier; i < indDernier; i++)
+    {
+        if (pivot >= liste[i])
+        {
+            swap(&liste[i], &liste[k]);
+            k++;
+        }
+    }
+    swap(&liste[indDernier], &liste[k]);
+    return k;
+}
+
+void triRapide(int *liste, int indPremier, int indDernier)
+
+{
+    if (indPremier < indDernier)
+    {
+        int indMilieu = partition(liste, indPremier, indDernier);
+        triRapide(liste, indPremier, indMilieu - 1);
+        triRapide(liste, indMilieu + 1, indDernier);
     }
 }
 
@@ -172,6 +199,12 @@ void plateforme(int taille_mini, int nb_listes, int nb_expes)
             assert(isSorted(liste, i));
             memcpy(liste, savedListe, i * sizeof(int));
             bulles(liste, i);
+            assert(isSorted(liste, i));
+            memcpy(liste, savedListe, i * sizeof(int));
+            triFusion(liste, 0, i - 1);
+            assert(isSorted(liste, i));
+            memcpy(liste, savedListe, i * sizeof(int));
+            triRapide(liste, 0, i - 1);
             assert(isSorted(liste, i));
             free(savedListe);
             free(liste);
@@ -199,9 +232,9 @@ int main(int argc, char **argv)
     printListe(liste, TAILLE);
     printf("%s", isSorted(liste, TAILLE) ? "La liste est triee\n" : "La liste n'est pas triee\n");
     free(liste);
-    plateforme(100, 10, 100);*/
     triFusion(liste, 0, TAILLE - 1);
-    printListe(liste, TAILLE);
+    printListe(liste, TAILLE);*/
+    plateforme(100, 10, 100);
 
     return 0;
 }
