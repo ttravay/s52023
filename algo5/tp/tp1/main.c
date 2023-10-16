@@ -7,6 +7,12 @@
 const int TAILLE = 10;
 const int NBMAXLISTE = 100;
 
+struct Stat {
+    int comparaisons;
+    int permutations;
+    int total;
+};
+
 void swap(int *var1, int *var2)
 {
     int tmp = *var1;
